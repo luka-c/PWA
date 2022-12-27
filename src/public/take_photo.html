@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" 
+    rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="manifest" href="manifest.json">
+    <title>Photos</title>
+</head>
+
+<nav class="navbar navbar-expand-lg text-white bg-primary align-content-center ps-3">
+    <span class="navbar-brand text-white">Photo Gallery</span>
+    <div class="container-fluid px-3 justify-content-start">
+        <a href="/" class="nav-link">Home</a>
+        <a href="photos.html" class="nav-link ms-3">Photos</a>
+        <a href="take_photo.html" class="nav-link ms-3">Take Photo</a>
+    </div>
+</nav>
+
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-3">Take a photo here</h1>
+        <button class="btn btn-primary mb-2" id="start">Enable Camera</button>
+        <div class="w-100 d-flex flex-column align-items-center"> 
+            <video id="video" width="600" height="600" autoplay></video>           
+            <button class="btn btn-success mt-2" id="snap">Snap Photo</button>
+            <canvas id="canvas" width="600" height="600"></canvas>
+        </div>
+    </div>
+
+    <script>
+        const start = document.querySelector("#start");
+        const snap = document.querySelector("#snap");
+        const canvas = document.querySelector("#canvas");
+        const video = document.querySelector("#video");
+
+        const camera_options = {
+            video: true,
+            audio: false
+        }
+
+        if ("mediaDevices" in navigator) {
+            start.addEventListener('click', async function() {
+                const stream = await navigator
+                    .mediaDevices
+                    .getUserMedia(camera_options);
+                video.srcObject = stream;
+            });
+
+            snap.addEventListener('click', function() {
+                canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+                let image_data_url = canvas.toDataURL('image/jpeg');
+                console.log(image_data_url);
+            });
+        }
+        else {
+            alert("Your device or browser doesn't support media capture")
+        }
+        
+    </script>
+</body>
