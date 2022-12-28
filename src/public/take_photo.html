@@ -11,7 +11,7 @@
 </head>
 
 <nav class="navbar navbar-expand-lg text-white bg-primary align-content-center ps-3">
-    <span class="navbar-brand text-white">Photo Gallery</span>
+    <span class="navbar-brand fw-bold text-white">Photo Gallery</span>
     <div class="container-fluid px-3 justify-content-start">
         <a href="/" class="nav-link">Home</a>
         <a href="photos.html" class="nav-link ms-3">Photos</a>
@@ -22,42 +22,21 @@
 <body>
     <div class="container mt-5">
         <h1 class="mb-3">Take a photo here</h1>
-        <button class="btn btn-primary mb-2" id="start">Enable Camera</button>
-        <div class="w-100 d-flex flex-column align-items-center"> 
-            <video id="video" width="600" height="600" autoplay></video>           
-            <button class="btn btn-success mt-2" id="snap">Snap Photo</button>
-            <canvas id="canvas" width="600" height="600"></canvas>
+        <div class="btn-group" id="enable">
+            <button class="btn btn-primary mb-2" id="start">Enable Camera</button>
+            <button class="btn btn-warning mb-2" id="end">Disable Camera</button>
+        </div>
+        <div class="w-100 d-flex justify-content-between align-items-center"> 
+            <div style="display: none;" class="flex-column justify-content-center align-items-center" id="video-container"> 
+                <video id="video" width="600" height="600" autoplay></video>           
+                <button class="btn btn-success" id="snap">Snap Photo</button>
+            </div>
+            <div style="display: none;" class="flex-column justify-content-center align-items-center" id="canvas-container"> 
+                <canvas id="canvas" width="600" height="450"></canvas>
+                <button class="btn btn-success mt-4" id="upload">Upload Photo</button>
+            </div>
         </div>
     </div>
 
-    <script>
-        const start = document.querySelector("#start");
-        const snap = document.querySelector("#snap");
-        const canvas = document.querySelector("#canvas");
-        const video = document.querySelector("#video");
-
-        const camera_options = {
-            video: true,
-            audio: false
-        }
-
-        if ("mediaDevices" in navigator) {
-            start.addEventListener('click', async function() {
-                const stream = await navigator
-                    .mediaDevices
-                    .getUserMedia(camera_options);
-                video.srcObject = stream;
-            });
-
-            snap.addEventListener('click', function() {
-                canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
-                let image_data_url = canvas.toDataURL('image/jpeg');
-                console.log(image_data_url);
-            });
-        }
-        else {
-            alert("Your device or browser doesn't support media capture")
-        }
-        
-    </script>
+    <script type="module" src="./upload.js"></script>
 </body>

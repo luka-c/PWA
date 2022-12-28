@@ -1,3 +1,5 @@
+import { entries, del } from "https://cdn.jsdelivr.net/npm/idb-keyval@6/+esm";
+
 const cacheName = "static";
 
 self.addEventListener("install", e => {
@@ -53,3 +55,38 @@ self.addEventListener("fetch", e => {
         })
     );
 });
+
+self.addEventListener("sync", e => {
+    if (e.tag === "upload") {
+        e.waitUntil(
+            backgroundSync()
+        );
+    }
+})
+
+const backgroundSync = async function() {
+    entries().then( entries => {
+        entries.forEach( entry => 
+        {
+            console.log("Here");
+            fetch("/photo", {
+                method: "POST",
+                body: {
+                    "id": entry[1].id,
+                    "photo": entry[1].photo
+                }
+            })
+            .then( result => {
+                result.json().then( jsonData => {
+                    if (result.ok)
+                        del(jsonData.id);
+                    else
+                        alert("Error while uploading...")
+                })
+            })
+            .catch(error => {
+                console.log(error);
+            });
+        })
+    });
+}
