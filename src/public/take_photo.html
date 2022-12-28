@@ -10,30 +10,30 @@
     <title>Photos</title>
 </head>
 
-<nav class="navbar navbar-expand-lg text-white bg-primary align-content-center ps-3">
+<nav class="navbar navbar-expand-md bg-primary text-white align-items-md-center ps-3">
     <span class="navbar-brand fw-bold text-white">Photo Gallery</span>
-    <div class="container-fluid px-3 justify-content-start">
+    <div class="container-fluid px-md-3 m-0 px-0 justify-content-start align-items-start flex-md-row flex-column">
         <a href="/" class="nav-link">Home</a>
-        <a href="photos.html" class="nav-link ms-3">Photos</a>
-        <a href="take_photo.html" class="nav-link ms-3">Take Photo</a>
+        <a href="photos.html" class="nav-link ms-md-3">Photos</a>
+        <a href="take_photo.html" class="nav-link ms-md-3">Snap</a>
     </div>
 </nav>
 
 <body>
     <div class="container mt-5">
         <h1 class="mb-3">Take a photo here</h1>
-        <div class="btn-group" id="enable">
+        <div class="btn-group mb-3" id="enable">
             <button class="btn btn-primary mb-2" id="start">Enable Camera</button>
             <button class="btn btn-warning mb-2" id="end">Disable Camera</button>
         </div>
-        <div class="w-100 d-flex justify-content-between align-items-center"> 
+        <div class="w-100 d-flex flex-md-row flex-column justify-content-between align-items-center"> 
             <div style="display: none;" class="flex-column justify-content-center align-items-center" id="video-container"> 
-                <video id="video" width="600" height="600" autoplay></video>           
-                <button class="btn btn-success" id="snap">Snap Photo</button>
+                <video style="object-fit: cover;" id="video" width="600" height="450" autoplay></video>           
+                <button class="btn btn-success mt-3" id="snap">Snap Photo</button>
             </div>
             <div style="display: none;" class="flex-column justify-content-center align-items-center" id="canvas-container"> 
                 <canvas id="canvas" width="600" height="450"></canvas>
-                <button class="btn btn-success mt-4" id="upload">Upload Photo</button>
+                <button class="btn btn-success mt-3" id="upload">Upload Photo</button>
             </div>
         </div>
     </div>

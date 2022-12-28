@@ -9,9 +9,13 @@ self.addEventListener("install", e => {
                 "/",
                 "manifest.json",
                 "index.html",
-                "photos.html",
                 "404.html",
+                "photos.html",
+                "fetch-photos.js",
+                "photos",
+                "/photos-array",
                 "icons/apple-icon-180.png",
+                "icons/manifest-icon-192.maskable.png",
                 "https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"
             ])
         })
@@ -34,24 +38,28 @@ self.addEventListener("activate", e => {
 });
 
 
-self.addEventListener("fetch", e => {
-    e.respondWith(
-        caches.match(e.request).then( response => {
-            if (response) {
-                return response;
+self.addEventListener("fetch", event => {
+    event.respondWith(
+        fetch(event.request)
+        .then( async (response) => {
+            if (response.status === 404) {
+                return caches.match("404.html");
             }
-            else {
-                return fetch(e.request).then( response => {
-                    if (response.status === 404) {
-                        return caches.match("404.html");
-                    }
 
-                    return caches.open(cacheName).then( cache => {
-                        cache.put(e.request.url, response.clone());
-                        return response;
-                    });
-                });
-            }
+            return caches.open(cacheName).then( cache => {
+                if (!event.request.url.endsWith("notification")) 
+                    cache.put(event.request, response.clone())
+                return response;
+            })
+        })
+        .catch(function() { 
+            return caches.match(event.request)
+            .then( res => {
+                if (res !== undefined)
+                    return res
+                else
+                    return caches.match("404.html");
+            })
         })
     );
 });
@@ -68,13 +76,15 @@ const backgroundSync = async function() {
     entries().then( entries => {
         entries.forEach( entry => 
         {
-            console.log("Here");
             fetch("/photo", {
                 method: "POST",
-                body: {
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
                     "id": entry[1].id,
                     "photo": entry[1].photo
-                }
+                })
             })
             .then( result => {
                 result.json().then( jsonData => {
@@ -90,3 +100,33 @@ const backgroundSync = async function() {
         })
     });
 }
+
+self.addEventListener("push", e => {
+    const data = e.data.json();
+
+    self.registration.showNotification(
+        data.title,
+        {
+            body: "Click here to view",
+            icon: "icons/apple-icon-180.png",
+            badge: "icons/apple-icon-180.png",
+            data: {
+                redirectUrl: "/photos.html"
+            }
+        }
+    )
+});
+
+self.addEventListener("notificationclick", function (event) {
+    const notification = event.notification;
+
+    event.waitUntil(
+        clients.matchAll().then(cls => {
+            cls.forEach( client => {
+                client.navigate(notification.data.redirectUrl);
+                client.focus();
+            });
+            notification.close();
+        })
+    );
+});
